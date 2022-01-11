@@ -4,12 +4,12 @@ import java.util.*;
 public class GroupChat
 {
 	private static final String TERMINATE = "Exit";
-	static String name;
+	static String nome;
 	static volatile boolean finished = false;
 	public static void main(String[] args)
 	{
 		if (args.length != 2)
-			System.out.println("Two arguments required: <multicast-host> <port-number>");
+			System.out.println("Dois argumentos necessários: <ip-multicast> <numero-da-porta>");
 		else
 		{
 			try
@@ -17,8 +17,8 @@ public class GroupChat
 				InetAddress group = InetAddress.getByName(args[0]);
 				int port = Integer.parseInt(args[1]);
 				Scanner sc = new Scanner(System.in);
-				System.out.print("Enter your name: ");
-				name = sc.nextLine();
+				System.out.print("Coloque seu nome: ");
+				nome = sc.nextLine();
 				MulticastSocket socket = new MulticastSocket(port);
 			
 				// Since we are deploying
@@ -33,20 +33,20 @@ public class GroupChat
 				t.start();
 				
 				// sent to the current group
-				System.out.println("Start typing messages...\n");
+				System.out.println("Digite a mensagem...\n");
 				while(true)
 				{
-					String message;
-					message = sc.nextLine();
-					if(message.equalsIgnoreCase(GroupChat.TERMINATE))
+					String mensagem;
+					mensagem = sc.nextLine();
+					if(mensagem.equalsIgnoreCase(GroupChat.TERMINATE))
 					{
 						finished = true;
 						socket.leaveGroup(group);
 						socket.close();
 						break;
 					}
-					message = name + ": " + message;
-					byte[] buffer = message.getBytes();
+					mensagem = nome + ": " + mensagem;
+					byte[] buffer = mensagem.getBytes();
 					DatagramPacket datagram = new
 					DatagramPacket(buffer,buffer.length,group,port);
 					socket.send(datagram);
@@ -54,12 +54,12 @@ public class GroupChat
 			}
 			catch(SocketException se)
 			{
-				System.out.println("Error creating socket");
+				System.out.println("Erro ao criar o socket");
 				se.printStackTrace();
 			}
 			catch(IOException ie)
 			{
-				System.out.println("Error reading/writing from/to socket");
+				System.out.println("Erro ao ler/escrever do/para o socket");
 				ie.printStackTrace();
 			}
 		}
@@ -92,12 +92,12 @@ class ReadThread implements Runnable
 				socket.receive(datagram);
 				message = new
 				String(buffer,0,datagram.getLength(),"UTF-8");
-				if(!message.startsWith(GroupChat.name))
+				if(!message.startsWith(GroupChat.nome))
 					System.out.println(message);
 			}
 			catch(IOException e)
 			{
-				System.out.println("Socket closed!");
+				System.out.println("Socket fechado!");
 			}
 		}
 	}
